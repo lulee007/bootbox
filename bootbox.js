@@ -1,6 +1,6 @@
 /**
- * bootbox.js [master branch]
- *
+ * bootbox.js [v4.3.0]
+ * 
  * http://bootboxjs.com/license.txt
  */
 
@@ -30,11 +30,12 @@
   var templates = {
     dialog:
       "<div class='bootbox modal' tabindex='-1' role='dialog'>" +
-        "<div class='modal-dialog'>" +
-          "<div class='modal-content'>" +
+      //comment by lxh conflict with bootstap-modal-bs3patch.css
+      // "<div class='modal-dialog'>" +
+      // "<div class='modal-content'>" +
             "<div class='modal-body'><div class='bootbox-body'></div></div>" +
-          "</div>" +
-        "</div>" +
+      // "</div>" +
+	  // "</div>" +
       "</div>",
     header:
       "<div class='modal-header'>" +
@@ -77,8 +78,6 @@
     animate: true,
     // additional class string applied to the top level dialog
     className: null,
-    // whether or not to enable keyboard binding
-    keyboard: false,
     // whether or not to include a close button
     closeButton: true,
     // show the dialog immediately by default
@@ -300,20 +299,6 @@
     return options;
   }
 
-  exports.defineLocale = function (name, values) {
-      if (values) {
-          locales[name] = {
-              OK: values.OK,
-              CANCEL: values.CANCEL,
-              CONFIRM: values.CONFIRM
-          };
-          return locales[name];
-      } else {
-          delete locales[name];
-          return null;
-      }
-  };
-
   exports.alert = function() {
     var options;
 
@@ -483,6 +468,7 @@
             throw new Error("given options in wrong format");
           }
 
+
           // ... but override that element if this option sits in a group
 
           if (option.group) {
@@ -589,14 +575,6 @@
       onEscape: options.onEscape
     };
 
-    if ($.fn.modal === undefined) {
-      throw new Error(
-        "$.fn.modal is not defined; please double check you have included " +
-        "the Bootstrap JavaScript library. See http://getbootstrap.com/javascript/ " +
-        "for more details."
-      );
-    }
-
     each(buttons, function(key, button) {
 
       // @TODO I don't like this string appending to itself; bit dirty. Needs reworking
@@ -659,7 +637,10 @@
       // by children of the current dialog. We shouldn't anymore now BS
       // namespaces its events; but still worth doing
       if (e.target === this) {
-        dialog.remove();
+    	  //modified by lxh dialog解决消失后没有真正删除掉。conflict with bootstap-modal
+    	  setTimeout(function(){
+    		  $(dialog[0]).remove();// dialog is an array with length 1? get the first el to remove 
+    		  },500);//can't remove immediately，so try to settimeout
       }
     });
 
@@ -724,7 +705,7 @@
 
     dialog.modal({
       backdrop: options.backdrop,
-      keyboard: options.keyboard || false,
+      keyboard: false,
       show: false
     });
 
@@ -836,16 +817,6 @@
       OK      : "אישור",
       CANCEL  : "ביטול",
       CONFIRM : "אישור"
-    },
-    hu : {
-      OK      : "OK",
-      CANCEL  : "Mégsem",
-      CONFIRM : "Megerősít"
-    },
-    hr : {
-      OK      : "OK",
-      CANCEL  : "Odustani",
-      CONFIRM : "Potvrdi"
     },
     id : {
       OK      : "OK",
